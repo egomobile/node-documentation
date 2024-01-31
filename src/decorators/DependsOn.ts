@@ -38,7 +38,7 @@ export type DependencyInfoResolver = (item: DependencyItem) => IDependencyInform
  */
 export type DependencyItem =
     IClassDependencyItem |
-    IDependencyItem |
+    IMethodDependencyItem |
     IParameterDependencyItem |
     IPropertyDependencyItem;
 
