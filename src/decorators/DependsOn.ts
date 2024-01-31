@@ -102,6 +102,10 @@ export interface IDependencyInformation {
      */
     entities?: Nilable<DependencyInformationEntities>;
     /**
+     * An optional list of references. Should be handled as URIs.
+     */
+    references?: Nilable<string[]>;
+    /**
      * Optional notes/remarks for this app. Should be handled as Markdown, if possible.
      */
     remarks?: Nilable<string>;
@@ -142,6 +146,10 @@ export interface IDependencyInformationEntity {
      */
     key: ReferenceValue;
     /**
+     * An optional list of references. Should be handled as URIs.
+     */
+    references?: Nilable<string[]>;
+    /**
      * Optional notes/remarks for this entity. Should be handled as Markdown, if possible.
      */
     remarks?: Nilable<string>;
@@ -177,6 +185,10 @@ export interface IDependencyInformationEntityAttribute {
      * The unique key. Value should be handled as slug value, case-insensitive.
      */
     key: ReferenceValue;
+    /**
+     * An optional list of references. Should be handled as URIs.
+     */
+    references?: Nilable<string[]>;
     /**
      * Optional notes/remarks for this attribute. Should be handled as Markdown, if possible.
      */
