@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import type { ClassPropKey, Collection, Constructor, IArrayLike, Nilable, Optional, ReferenceValue } from "../types/internal";
+import type { ClassOrInstance, ClassPropKey, Collection, Constructor, IArrayLike, Nilable, Optional, ReferenceValue } from "../types/internal";
 import { isCollection } from "../utils/internal";
 
 /**
@@ -101,6 +101,10 @@ export interface IDependencyInformation {
      * Optional entities for this app.
      */
     entities?: Nilable<DependencyInformationEntities>;
+    /**
+     * Optional unique key. Value should be handled case-insensitive.
+     */
+    key?: Nilable<ReferenceValue>;
     /**
      * An optional list of references. Should be handled as URIs.
      */
@@ -210,6 +214,10 @@ export interface IDependencyItem {
  */
 export interface IMethodDependencyItem extends IDependencyItem {
     /**
+     * The underlying class or constructor.
+     */
+    classOrInstance: ClassOrInstance<any>;
+    /**
      * The key / name.
      */
     key: ClassPropKey;
@@ -224,13 +232,17 @@ export interface IMethodDependencyItem extends IDependencyItem {
  */
 export interface IParameterDependencyItem extends IDependencyItem {
     /**
-     * The key / name, if available.
+     * The underlying class or constructor.
      */
-    key?: Optional<ClassPropKey>;
+    classOrInstance: ClassOrInstance<any>;
     /**
      * The zero-based index inside the method.
      */
     index: number;
+    /**
+     * The key / name, if available.
+     */
+    key?: Optional<ClassPropKey>;
     /**
      * The type.
      */
@@ -241,6 +253,10 @@ export interface IParameterDependencyItem extends IDependencyItem {
  * A `IDependencyItem` with information about a class property and its dependencies.
  */
 export interface IPropertyDependencyItem extends IDependencyItem {
+    /**
+     * The underlying class or constructor.
+     */
+    classOrInstance: ClassOrInstance<any>;
     /**
      * The key / name.
      */
@@ -453,45 +469,79 @@ export function DependsOn(
     return (...args: any[]) => {
         const target: any = args[0];
 
-        if (typeof target === "function") {
-            const newClassItem: IClassDependencyItem = {
-                "constructor": target,
-                "type": "class"
+        const addAsMethod = () => {
+            const propertyKey: Optional<ClassPropKey> = args[1];
+
+            const newMethodItem: IMethodDependencyItem = {
+                "classOrInstance": target,
+                "key": propertyKey as ClassPropKey,
+                "type": "method"
             };
 
-            addItem(newClassItem);
-        }
-        else {
+            addItem(newMethodItem);
+        };
+
+        const addAsParameter = () => {
+            const descriptorOrIndex: Optional<TypedPropertyDescriptor<any> | number> = args[2];
             const propertyKey: Optional<ClassPropKey> = args[1];
+
+            const newParameterItem: IParameterDependencyItem = {
+                "classOrInstance": target,
+                "index": descriptorOrIndex as number,
+                "key": propertyKey,
+                "type": "parameter"
+            };
+
+            addItem(newParameterItem);
+        };
+
+        const addAsProperty = () => {
+            const propertyKey: Optional<ClassPropKey> = args[1];
+
+            const newPropertyItem: IPropertyDependencyItem = {
+                "classOrInstance": target,
+                "key": propertyKey as ClassPropKey,
+                "type": "property"
+            };
+
+            addItem(newPropertyItem);
+        };
+
+        const addWith3Args = () => {
             const descriptorOrIndex: Optional<TypedPropertyDescriptor<any> | number> = args[2];
 
             if (typeof descriptorOrIndex === "undefined") {
-                const newPropertyItem: IPropertyDependencyItem = {
-                    "key": propertyKey as ClassPropKey,
-                    "type": "property"
-                };
-
-                addItem(newPropertyItem);
+                addAsProperty();
+            }
+            else if (typeof descriptorOrIndex === "number") {
+                addAsParameter();
             }
             else {
-                if (typeof descriptorOrIndex === "number") {
-                    const newParameterItem: IParameterDependencyItem = {
-                        "index": descriptorOrIndex as number,
-                        "key": propertyKey,
-                        "type": "parameter"
-                    };
-
-                    addItem(newParameterItem);
-                }
-                else {
-                    const newMethodItem: IMethodDependencyItem = {
-                        "key": propertyKey as ClassPropKey,
-                        "type": "method"
-                    };
-
-                    addItem(newMethodItem);
-                }
+                addAsMethod();
             }
+        };
+
+        if (typeof target === "function") {
+            if (args.length === 3) {
+                // static member
+
+                addWith3Args();
+            }
+            else if (args.length === 1) {
+                // class
+
+                const newClassItem: IClassDependencyItem = {
+                    "constructor": target,
+                    "type": "class"
+                };
+
+                addItem(newClassItem);
+            }
+        }
+        else {
+            // instance member
+
+            addWith3Args();
         }
     };
 }
