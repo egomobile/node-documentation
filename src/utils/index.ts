@@ -13,10 +13,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import type { DependencyItemWithInfo } from "../decorators";
-import type { ISerializableClassDependencyItemWithInfo, ISerializableMethodDependencyItemWithInfo, ISerializableParameterDependencyItemWithInfo, ISerializablePropertyDependencyItemWithInfo, SerializableDependencyItem } from "../types";
-import type { List } from "../types/internal";
-import { getClassName, isConstructor } from "./internal";
+import type { DependencyItemWithInfo, ISerializableClassDependencyItemWithInfo, ISerializableFunctionDependencyItemWithInfo, ISerializableMethodDependencyItemWithInfo, ISerializableParameterDependencyItemWithInfo, ISerializablePropertyDependencyItemWithInfo, SerializableDependencyItem } from "../types";
+import type { GetClassNameFunc, IsConstructorFunc, List } from "../types/internal";
 
 /**
  * Serialized a list of dependency items.
@@ -26,6 +24,9 @@ import { getClassName, isConstructor } from "./internal";
  * @returns {SerializableDependencyItem[]} The serialized list.
  */
 export function serializeDependencies(list: List<DependencyItemWithInfo>): SerializableDependencyItem[] {
+    const getClassName: GetClassNameFunc = require("./internal").getClassName;
+    const isConstructor: IsConstructorFunc = require("./internal").isConstructor;
+
     const serializedItems: SerializableDependencyItem[] = [];
 
     for (const item of list) {
@@ -62,12 +63,21 @@ export function serializeDependencies(list: List<DependencyItemWithInfo>): Seria
 
             newSerializedItem = newClassItem;
         }
-        else {
+        else if (item.type === "property") {
             const newClassItem: ISerializablePropertyDependencyItemWithInfo = {
                 "className": getClassName(item.classOrInstance),
                 "info": item.info,
                 "isStatic": isConstructor(item.classOrInstance),
                 "name": String(item.key),
+                "type": item.type
+            };
+
+            newSerializedItem = newClassItem;
+        }
+        else {
+            const newClassItem: ISerializableFunctionDependencyItemWithInfo = {
+                "info": item.info,
+                "name": item.key,
                 "type": item.type
             };
 

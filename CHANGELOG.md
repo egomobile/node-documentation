@@ -1,5 +1,10 @@
 # Change Log (@egomobile/documentation)
 
+## 0.4.0
+
+- add tools to add function dependencies
+- reorganize code, especially types
+
 ## 0.3.0
 
 - implement serializable types and `serializeDependencies()` utility function

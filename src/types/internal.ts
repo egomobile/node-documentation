@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import type { DependencyInfoArg, DependencyInfoCollectionArg, DependencyItem, DependencyItemWithInfo, IDependencyInformation } from "./dependencies";
+
 export type ClassOrInstance<T extends any = Object> = T | Constructor<T>;
 
 export type ClassPropKey = string | symbol;
@@ -21,11 +23,33 @@ export type Collection<T extends any = any> =
     IArrayLike<T> |
     ISetLike<T>;
 
-export type Constructor<T extends any = any> = (new (...args: any[]) => T);
+export type Constructor<T extends any = any> =
+    (new (...args: any[]) => T);
+
+export type CreateDependsOnHelpersFunc =
+    (
+        infoOrResolver: DependencyInfoArg,
+        dependenciesOrResolver: Nilable<DependencyInfoCollectionArg>
+    ) => {
+        addItem: (item: DependencyItem) => void;
+        getDepsCollection: () => Collection<DependencyItemWithInfo>;
+        getInfo: () => IDependencyInformation;
+    };
+
+export type Func = (...args: any[]) => any;
+
+export type GetClassNameFunc =
+    (classOrInstance: ClassOrInstance<any>) => Nullable<string>;
 
 export interface IArrayLike<T extends any = any> {
     push(item: T): any;
 }
+
+export type IsCollectionFunc<T extends any = any> =
+    (val: any) => val is Collection<T>;
+
+export type IsConstructorFunc<T extends any = any> =
+    (classOrInstance: ClassOrInstance<T>) => classOrInstance is Constructor<T>;
 
 export interface ISetLike<T extends any = any> {
     add(item: T): any;

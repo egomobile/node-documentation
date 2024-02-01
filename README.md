@@ -19,7 +19,8 @@ npm install --save @egomobile/documentation
 ```typescript
 import {
     defaultDependencies,
-    DependsOn
+    DependsOn,
+    functionDependsOn
 } from "@egomobile/documentation";
 
 @DependsOn({
@@ -75,6 +76,12 @@ class MyDocumentedClass {
         // ...
     }
 }
+
+function myFunction() {
+  // ...
+}
+// do this for functions as well
+functionDependsOn(myFunction);
 
 console.log(
     // by default all information are

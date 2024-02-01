@@ -13,87 +13,46 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import type { IDependencyInformation } from "../decorators";
-import type { Nullable } from "./internal";
+import type { ClassOrInstance, Nilable, Nullable } from "./internal";
 
 /**
- * A serizable version of an `IClassDependencyItem`.
- */
-export interface ISerializableClassDependencyItemWithInfo extends ISerializableDependencyItemWithInfo {
-    /**
-     * The name of the class.
-     */
-    name: string;
-    /**
-     * The type
-     */
-    type: "class";
-}
-
-/**
- * A serizable version of an `IDependencyItem`.
- */
-export interface ISerializableDependencyItemWithInfo {
-    /**
-     * The underlying information.
-     */
-    info: IDependencyInformation;
-}
-
-/**
- * A serizable version of an `IMethodDependencyItem`.
- */
-export interface ISerializableMethodDependencyItemWithInfo extends ISerializableDependencyItemWithInfo, IWithClassNameProp, IWithIsStaticProp {
-    /**
-     * The name of the method.
-     */
-    name: string;
-    /**
-     * The type.
-     */
-    type: "method";
-}
-
-/**
- * A serizable version of an `IParameterDependencyItem`.
- */
-export interface ISerializableParameterDependencyItemWithInfo extends ISerializableDependencyItemWithInfo, IWithClassNameProp, IWithIsStaticProp {
-    /**
-     * The zero-based index inside the method.
-     */
-    index: number;
-    /**
-     * The name, if available.
-     */
-    name: Nullable<string>;
-    /**
-     * The type.
-     */
-    type: "parameter";
-}
-
-/**
- * A serizable version of an `IPropertyDependencyItem`.
- */
-export interface ISerializablePropertyDependencyItemWithInfo extends ISerializableDependencyItemWithInfo, IWithClassNameProp, IWithIsStaticProp {
-    /**
-     * The name of the property.
-     */
-    name: string;
-    /**
-     * The type.
-     */
-    type: "property";
-}
-
-/**
- * An object with an `className` property.
+ * An object with a `className` property.
  */
 export interface IWithClassNameProp {
     /**
      * The name of the underlying class, if available.
      */
     className: Nullable<string>;
+}
+
+/**
+ * An object with a `classOrInstance` property.
+ */
+export interface IWithClassOrInstanceProp {
+    /**
+     * The underlying class or constructor.
+     */
+    classOrInstance: ClassOrInstance<any>;
+}
+
+/**
+ *  An object with effects properties.
+ */
+export interface IWithEffectsProps {
+    /**
+     * If there is an action on `app`'s side, it will
+     * have effects in this application in general.
+     *
+     * @default `false`
+     */
+    hasLocalEffects: Nilable<boolean>;
+    /**
+     * If there is an action in this application,
+     * it will have effects on `app`'s side in general.
+     *
+     * @default `true`
+     */
+    hasRemoteEffects: Nilable<boolean>;
 }
 
 /**
@@ -107,10 +66,33 @@ export interface IWithIsStaticProp {
 }
 
 /**
- * An serializable dependency info item.
+ * An object with a `references` property.
  */
-export type SerializableDependencyItem =
-    ISerializableClassDependencyItemWithInfo |
-    ISerializableMethodDependencyItemWithInfo |
-    ISerializableParameterDependencyItemWithInfo |
-    ISerializablePropertyDependencyItemWithInfo;
+export interface IWithReferencesProp {
+    /**
+     * An optional list of references. Should be handled as URIs.
+     */
+    references: Nilable<string[]>;
+}
+
+/**
+ * An object with a `remarks` property.
+ */
+export interface IWithRemarksProp {
+    /**
+     * Optional notes/remarks. Should be handled as Markdown, if possible.
+     */
+    references: Nilable<string[]>;
+}
+
+/**
+ * An object with a `type` property.
+ */
+export interface IWithTypeProp {
+    /**
+     * An optional value for classification. Value should be handled as slug value, case-insensitive.
+     */
+    type: Nilable<string[]>;
+}
+
+export * from "./dependencies";
