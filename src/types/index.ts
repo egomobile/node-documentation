@@ -92,7 +92,7 @@ export interface IWithTypeProp {
     /**
      * An optional value for classification. Value should be handled as slug value, case-insensitive.
      */
-    type: Nilable<string[]>;
+    type: Nilable<string>;
 }
 
 export * from "./dependencies";

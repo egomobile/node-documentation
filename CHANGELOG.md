@@ -1,6 +1,6 @@
 # Change Log (@egomobile/documentation)
 
-## 0.4.0
+## 0.4.1
 
 - add tools to add function dependencies
 - reorganize code, especially types
