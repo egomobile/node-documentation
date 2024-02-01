@@ -82,7 +82,7 @@ export interface IWithRemarksProp {
     /**
      * Optional notes/remarks. Should be handled as Markdown, if possible.
      */
-    references: Nilable<string[]>;
+    remarks: Nilable<string>;
 }
 
 /**
