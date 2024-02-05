@@ -1,6 +1,6 @@
 {
     "name": "@egomobile/documentation",
-    "version": "0.4.2",
+    "version": "0.5.0",
     "description": "Tools for documenting (TypeScript) code.",
     "main": "lib/index.js",
     "engines": {

@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import type { IDependencyInformation, IParameterDependencyItem, IPropertyDependencyItem, IMethodDependencyItem, IClassDependencyItem, DependencyInfoResolver, DependencyInfoCollectionArg } from "../types";
+import type { IDependencyInformation, IParameterDependencyItem, IPropertyDependencyItem, IMethodDependencyItem, DependencyInfoResolver, DependencyInfoCollectionArg } from "../types";
 import type { ClassPropKey, CreateDependsOnHelpersFunc, Nilable, Optional } from "../types/internal";
 
 /**
@@ -169,12 +169,15 @@ export function DependsOn(
             else if (args.length === 1) {
                 // class
 
-                const newClassItem: IClassDependencyItem = {
-                    "constructor": target,
-                    "type": "class"
-                };
+                const {
+                    classDependsOn
+                } = require("../functions/dependsOn");
 
-                addItem(newClassItem);
+                classDependsOn(
+                    target,
+                    infoOrResolver,
+                    dependenciesOrResolver
+                );
             }
         }
         else {

@@ -1,5 +1,10 @@
 # Change Log (@egomobile/documentation)
 
+## 0.5.0
+
+- add `classDependsOn()` function
+- code cleanup and improvements
+
 ## 0.4.2
 
 - add tools to add function dependencies
