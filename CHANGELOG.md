@@ -1,5 +1,9 @@
 # Change Log (@egomobile/documentation)
 
+## 0.6.0
+
+- add optional `entities` prop to `IDependencyInformationEntity`
+
 ## 0.5.0
 
 - add `classDependsOn()` function

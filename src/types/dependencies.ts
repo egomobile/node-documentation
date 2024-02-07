@@ -115,6 +115,10 @@ export interface IDependencyInformationEntity extends Partial<IWithEffectsProps>
      */
     category?: Nilable<string>;
     /**
+     * Optional children for this entity.
+     */
+    entities?: Nilable<DependencyInformationEntities>;
+    /**
      * The unique key. Value should be handled case-insensitive.
      */
     key: ReferenceValue;
