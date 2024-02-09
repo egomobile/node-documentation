@@ -100,7 +100,7 @@ export function isNil(val: unknown): val is (null | undefined) {
     return typeof val === "undefined" || val === null;
 }
 
-export function tryGetStackInfo(offset = 0): Nullable<IStackInfo | false> {
+export function tryGetStackInfo(offset = 1): Nullable<IStackInfo | false> {
     try {
         const stackTrace = new Error().stack;
 
