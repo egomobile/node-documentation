@@ -102,7 +102,7 @@ export function DependsOn(
     const createDependsOnHelpers: CreateDependsOnHelpersFunc = require("../utils/internal").createDependsOnHelpers;
     const tryGetStackInfo = require("../utils/internal").tryGetStackInfo;
 
-    const stackInfo: Nullable<IStackInfo | false> = tryGetStackInfo();
+    const stackInfo: Nullable<IStackInfo | false> = tryGetStackInfo(1);
 
     const {
         addItem

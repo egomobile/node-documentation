@@ -100,13 +100,13 @@ export function isNil(val: unknown): val is (null | undefined) {
     return typeof val === "undefined" || val === null;
 }
 
-export function tryGetStackInfo(): Nullable<IStackInfo | false> {
+export function tryGetStackInfo(offset = 0): Nullable<IStackInfo | false> {
     try {
         const stackTrace = new Error().stack;
 
         if (stackTrace) {
             const stackTraceLines = stackTrace.split("\n");
-            const callerLine = stackTraceLines[2];
+            const callerLine = stackTraceLines[2 + offset];
             if (callerLine) {
                 const fileAndLineRegex = /\(?([^\s]+):(\d+):\d+\)?$/i;
                 const match = fileAndLineRegex.exec(callerLine);
