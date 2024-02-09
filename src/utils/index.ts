@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import type { DependencyItemWithInfo, ISerializableClassDependencyItemWithInfo, ISerializableFunctionDependencyItemWithInfo, ISerializableMethodDependencyItemWithInfo, ISerializableParameterDependencyItemWithInfo, ISerializablePropertyDependencyItemWithInfo, SerializableDependencyItem } from "../types";
+import type { DependencyItemWithInfo, ISerializableClassDependencyItemWithInfo, ISerializableFunctionDependencyItemWithInfo, ISerializableMethodDependencyItemWithInfo, ISerializableModuleDependencyItemWithInfo, ISerializableParameterDependencyItemWithInfo, ISerializablePropertyDependencyItemWithInfo, SerializableDependencyItem } from "../types";
 import type { GetClassNameFunc, IsConstructorFunc, List } from "../types/internal";
 
 /**
@@ -30,9 +30,12 @@ export function serializeDependencies(list: List<DependencyItemWithInfo>): Seria
     const serializedItems: SerializableDependencyItem[] = [];
 
     for (const item of list) {
+        const existsIn = item.existsIn || null;
+
         let newSerializedItem: SerializableDependencyItem;
         if (item.type === "class") {
             const newClassItem: ISerializableClassDependencyItemWithInfo = {
+                existsIn,
                 "info": item.info,
                 "name": item.constructor.name,
                 "type": item.type
@@ -41,19 +44,21 @@ export function serializeDependencies(list: List<DependencyItemWithInfo>): Seria
             newSerializedItem = newClassItem;
         }
         else if (item.type === "method") {
-            const newClassItem: ISerializableMethodDependencyItemWithInfo = {
+            const newMethodItem: ISerializableMethodDependencyItemWithInfo = {
                 "className": getClassName(item.classOrInstance),
+                existsIn,
                 "info": item.info,
                 "isStatic": isConstructor(item.classOrInstance),
                 "name": String(item.key),
                 "type": item.type
             };
 
-            newSerializedItem = newClassItem;
+            newSerializedItem = newMethodItem;
         }
         else if (item.type === "parameter") {
-            const newClassItem: ISerializableParameterDependencyItemWithInfo = {
+            const newParameterItem: ISerializableParameterDependencyItemWithInfo = {
                 "className": getClassName(item.classOrInstance),
+                existsIn,
                 "info": item.info,
                 "index": item.index,
                 "isStatic": isConstructor(item.classOrInstance),
@@ -61,27 +66,39 @@ export function serializeDependencies(list: List<DependencyItemWithInfo>): Seria
                 "type": item.type
             };
 
-            newSerializedItem = newClassItem;
+            newSerializedItem = newParameterItem;
         }
         else if (item.type === "property") {
-            const newClassItem: ISerializablePropertyDependencyItemWithInfo = {
+            const newPropertyItem: ISerializablePropertyDependencyItemWithInfo = {
                 "className": getClassName(item.classOrInstance),
+                existsIn,
                 "info": item.info,
                 "isStatic": isConstructor(item.classOrInstance),
                 "name": String(item.key),
                 "type": item.type
             };
 
-            newSerializedItem = newClassItem;
+            newSerializedItem = newPropertyItem;
         }
-        else {
-            const newClassItem: ISerializableFunctionDependencyItemWithInfo = {
+        else if (item.type === "function") {
+            const newFunctionItem: ISerializableFunctionDependencyItemWithInfo = {
+                existsIn,
                 "info": item.info,
                 "name": item.key,
                 "type": item.type
             };
 
-            newSerializedItem = newClassItem;
+            newSerializedItem = newFunctionItem;
+        }
+        else {
+            const newModuleItem: ISerializableModuleDependencyItemWithInfo = {
+                existsIn,
+                "info": item.info,
+                "name": String(item.module?.filename ?? ""),
+                "type": item.type
+            };
+
+            newSerializedItem = newModuleItem;
         }
 
         serializedItems.push(

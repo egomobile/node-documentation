@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import type { IWithClassNameProp, IWithClassOrInstanceProp, IWithEffectsProps, IWithIsStaticProp, IWithReferencesProp, IWithRemarksProp, IWithTypeProp } from ".";
+import type { IStackInfo, IWithClassNameProp, IWithClassOrInstanceProp, IWithEffectsProps, IWithIsStaticProp, IWithReferencesProp, IWithRemarksProp, IWithTypeProp } from ".";
 import type { ClassPropKey, Collection, Constructor, Nilable, Nullable, Optional, ReferenceValue } from "./internal";
 
 /**
@@ -48,6 +48,7 @@ export type DependencyItem =
     IClassDependencyItem |
     IFunctionDependencyItem |
     IMethodDependencyItem |
+    IModuleDependencyItem |
     IParameterDependencyItem |
     IPropertyDependencyItem;
 
@@ -60,6 +61,13 @@ export type DependencyItemCollectionResolver = () => Collection<DependencyItemWi
  * An extension of `DependencyItem`.
  */
 export type DependencyItemWithInfo = DependencyItem & {
+    /**
+     * Information about the underlying file, if available.
+     *
+     * While `null` means that there is no information, does `false` indicate that detection of this
+     * information failed.
+     */
+    existsIn: Nullable<IStackInfo | false>;
     /**
      * The underlying information.
      */
@@ -173,6 +181,20 @@ export interface IMethodDependencyItem extends IDependencyItem, Partial<IWithCla
 }
 
 /**
+ * A `IDependencyItem` with information about a module and its dependencies.
+ */
+export interface IModuleDependencyItem extends IDependencyItem {
+    /**
+     * The module.
+     */
+    module: any;
+    /**
+     * The type.
+     */
+    type: "module";
+}
+
+/**
  * A `IDependencyItem` with information about a paremeter of a class method and its dependencies.
  */
 export interface IParameterDependencyItem extends IDependencyItem, Partial<IWithClassOrInstanceProp> {
@@ -223,6 +245,10 @@ export interface ISerializableClassDependencyItemWithInfo extends ISerializableD
  */
 export interface ISerializableDependencyItemWithInfo {
     /**
+     * Information about the origin.
+     */
+    existsIn: Nullable<IStackInfo>;
+    /**
      * The underlying information.
      */
     info: IDependencyInformation;
@@ -254,6 +280,20 @@ export interface ISerializableMethodDependencyItemWithInfo extends ISerializable
      * The type.
      */
     type: "method";
+}
+
+/**
+ * A serizable version of an `IModuleDependencyItem`.
+ */
+export interface ISerializableModuleDependencyItemWithInfo extends ISerializableDependencyItemWithInfo {
+    /**
+     * The name/path of the module.
+     */
+    name: string;
+    /**
+     * The type.
+     */
+    type: "module";
 }
 
 /**
@@ -295,5 +335,6 @@ export type SerializableDependencyItem =
     ISerializableClassDependencyItemWithInfo |
     ISerializableFunctionDependencyItemWithInfo |
     ISerializableMethodDependencyItemWithInfo |
+    ISerializableModuleDependencyItemWithInfo |
     ISerializableParameterDependencyItemWithInfo |
     ISerializablePropertyDependencyItemWithInfo;

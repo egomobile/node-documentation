@@ -16,6 +16,20 @@
 import type { ClassOrInstance, Nilable, Nullable } from "./internal";
 
 /**
+ * Stack information.
+ */
+export interface IStackInfo {
+    /**
+     * Path to file, if available.
+     */
+    file: Nullable<string>;
+    /**
+     * Line of code inside `file`, if available.
+     */
+    line: Nullable<number>;
+}
+
+/**
  * An object with a `className` property.
  */
 export interface IWithClassNameProp {

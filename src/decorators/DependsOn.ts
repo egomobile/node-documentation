@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import type { IDependencyInformation, IParameterDependencyItem, IPropertyDependencyItem, IMethodDependencyItem, DependencyInfoResolver, DependencyInfoCollectionArg } from "../types";
-import type { ClassPropKey, CreateDependsOnHelpersFunc, Nilable, Optional } from "../types/internal";
+import type { IDependencyInformation, IParameterDependencyItem, IPropertyDependencyItem, IMethodDependencyItem, DependencyInfoResolver, DependencyInfoCollectionArg, IStackInfo } from "../types";
+import type { ClassPropKey, CreateDependsOnHelpersFunc, Nilable, Nullable, Optional } from "../types/internal";
 
 /**
  * Adds meta for a class, property, method or parameter
@@ -100,6 +100,9 @@ export function DependsOn(
     dependenciesOrResolver?: Nilable<DependencyInfoCollectionArg>
 ): any {
     const createDependsOnHelpers: CreateDependsOnHelpersFunc = require("../utils/internal").createDependsOnHelpers;
+    const tryGetStackInfo = require("../utils/internal").tryGetStackInfo;
+
+    const stackInfo: Nullable<IStackInfo | false> = tryGetStackInfo();
 
     const {
         addItem
@@ -117,7 +120,10 @@ export function DependsOn(
                 "type": "method"
             };
 
-            addItem(newMethodItem);
+            addItem({
+                "existsIn": stackInfo,
+                "item": newMethodItem
+            });
         };
 
         const addAsParameter = () => {
@@ -131,7 +137,10 @@ export function DependsOn(
                 "type": "parameter"
             };
 
-            addItem(newParameterItem);
+            addItem({
+                "existsIn": stackInfo,
+                "item": newParameterItem
+            });
         };
 
         const addAsProperty = () => {
@@ -143,7 +152,10 @@ export function DependsOn(
                 "type": "property"
             };
 
-            addItem(newPropertyItem);
+            addItem({
+                "existsIn": stackInfo,
+                "item": newPropertyItem
+            });
         };
 
         const addWith3Args = () => {
@@ -176,7 +188,8 @@ export function DependsOn(
                 classDependsOn(
                     target,
                     infoOrResolver,
-                    dependenciesOrResolver
+                    dependenciesOrResolver,
+                    stackInfo
                 );
             }
         }

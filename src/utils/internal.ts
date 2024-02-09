@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import type { DependencyInfoArg, DependencyInfoCollectionArg, DependencyItem, DependencyItemWithInfo } from "../types";
-import type { ClassOrInstance, Collection, Constructor, Nilable, Nullable } from "../types/internal";
+import type { DependencyInfoArg, DependencyInfoCollectionArg, DependencyItem, DependencyItemWithInfo, IStackInfo } from "../types";
+import type { ClassOrInstance, Collection, Constructor, IAddDependencyItemOptions, Nilable, Nullable } from "../types/internal";
 
 export function createDependsOnHelpers(
     infoOrResolver: DependencyInfoArg,
@@ -39,12 +39,18 @@ export function createDependsOnHelpers(
             } :
             getDependencies;
 
-    const addItem = (item: DependencyItem) => {
+    const addItem = (options: IAddDependencyItemOptions) => {
+        const {
+            existsIn,
+            item
+        } = options;
+
         const deps = getDepsCollection();
 
         const itemToAdd: DependencyItemWithInfo = {
             ...item,
 
+            existsIn,
             "info": getInfo(item)
         };
 
@@ -92,4 +98,34 @@ export function isConstructor<T extends any = any>(classOrInstance: ClassOrInsta
 
 export function isNil(val: unknown): val is (null | undefined) {
     return typeof val === "undefined" || val === null;
+}
+
+export function tryGetStackInfo(): Nullable<IStackInfo | false> {
+    try {
+        const stackTrace = new Error().stack;
+
+        if (stackTrace) {
+            const stackTraceLines = stackTrace.split("\n");
+            const callerLine = stackTraceLines[2];
+            if (callerLine) {
+                const fileAndLineRegex = /\(?([^\s]+):(\d+):\d+\)?$/i;
+                const match = fileAndLineRegex.exec(callerLine);
+
+                if (match && match.length > 2) {
+                    const file = match[1].trim();
+                    const line = parseInt(match[2].trim() || "");
+
+                    return {
+                        "file": file || null,
+                        "line": Number.isNaN(line) ? null : line
+                    };
+                }
+            }
+        }
+
+        return null;
+    }
+    catch {
+        return false;
+    }
 }

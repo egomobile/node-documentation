@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import type { IStackInfo } from ".";
 import type { DependencyInfoArg, DependencyInfoCollectionArg, DependencyItem, DependencyItemWithInfo, IDependencyInformation } from "./dependencies";
 
 export type ClassOrInstance<T extends any = Object> = T | Constructor<T>;
@@ -31,7 +32,7 @@ export type CreateDependsOnHelpersFunc =
         infoOrResolver: DependencyInfoArg,
         dependenciesOrResolver: Nilable<DependencyInfoCollectionArg>
     ) => {
-        addItem: (item: DependencyItem) => void;
+        addItem: (options: IAddDependencyItemOptions) => void;
         getDepsCollection: () => Collection<DependencyItemWithInfo>;
         getInfo: () => IDependencyInformation;
     };
@@ -40,6 +41,11 @@ export type Func = (...args: any[]) => any;
 
 export type GetClassNameFunc =
     (classOrInstance: ClassOrInstance<any>) => Nullable<string>;
+
+export interface IAddDependencyItemOptions {
+    existsIn: Nullable<IStackInfo | false>;
+    item: DependencyItem;
+}
 
 export interface IArrayLike<T extends any = any> {
     push(item: T): any;

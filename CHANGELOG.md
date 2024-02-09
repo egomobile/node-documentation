@@ -1,5 +1,11 @@
 # Change Log (@egomobile/documentation)
 
+## 0.7.0
+
+- add `appDependsOn()` and `moduleDependsOn()` function
+- add `existsIn` props to `DependencyItemWithInfo` and `ISerializableDependencyItemWithInfo` based items
+- fix documentation
+
 ## 0.6.0
 
 - add optional `entities` prop to `IDependencyInformationEntity`
